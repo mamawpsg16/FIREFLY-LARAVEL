@@ -31,12 +31,32 @@
         </div>
         <div>
             <label for="last_name">Password</label>
-            <input type="password" name="password" value="{{ old('password') }}" >
+            <input type="password" name="password" value="{{ old('password') }}" class="password" >
         </div>
         <div>
             <label for="last_name">Password Confirmation</label>
-            <input type="password" name="password_confirmation" value="{{ old('password_confirmation ') }}" >
+            <input type="password" name="password_confirmation" value="{{ old('password_confirmation ') }}" class="password" >
         </div>
+        <div>
+            <label for="last_name">Account Recovery Question: </label>
+            <select name="question_id" >
+                @if(isset($questions))
+                    @foreach($questions as $key => $question)
+                        <option value="{{ $question->id }}" {{ old('question') === $question->id ? 'selected' : '' }}>{{ $question->question }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
+
+        <div>
+            <label for="question_answer">Answer:</label>
+            <input type="text" name="question_answer" value="{{ old('question_answer') }}" >
+        </div>
+
+        <label for="show_password">Show Password <input type="checkbox" id="show_password"></label>
+        
         <button type="submit">Register </button>
     </x-form.form>
+
+    <script src="{{ asset('js/show_password.js') }}"></script>
 </x-layout>

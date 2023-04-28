@@ -10,5 +10,6 @@
 <body>
     <x-navbar.navbar></x-navbar.navbar>
     {{ $slot }}
+
 </body>
 </html>

@@ -22,8 +22,11 @@
         </div>
         <div>
             <label for="last_name">Password</label>
-            <input type="password" name="password" value="{{ old('password') }}" required>
+            <input type="password" name="password" value="{{ old('password') }}" required class="password">
         </div>
-        <button type="submit">Register </button>
+        <label for="show_password">Show Password <input type="checkbox" id="show_password"></label>
+        <button type="submit">Login </button>
+        <a href="{{ route('forgot-password') }}">Forgot Password?</a>
     </x-form.form>
+    <script src="{{ asset('js/show_password.js') }}"></script>
 </x-layout>

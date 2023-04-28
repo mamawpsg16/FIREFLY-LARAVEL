@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\AccountRecoveryQuestion;
 
 class User extends Authenticatable
 {
@@ -23,6 +24,8 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'recovery_question_id',
+        'recovery_question_answer'
     ];
 
     /**
@@ -43,4 +46,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function recovery_question()
+    {
+        return $this->hasOne(AccountRecoveryQuestion::class);
+    }
 }

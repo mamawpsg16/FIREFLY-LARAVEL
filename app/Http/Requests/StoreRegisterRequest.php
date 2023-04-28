@@ -27,9 +27,11 @@ class StoreRegisterRequest extends FormRequest
             'first_name' => ['required'],
             'middle_name' => ['sometimes'],
             'last_name' => ['required'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email','unique:users,email'],
             'password' => ['required','confirmed'],
-            'password_confirmation' => 'required'
+            'password_confirmation' => 'required',
+            'question_id' => 'required',
+            'question_answer' => 'required'
         ];
     }
 }

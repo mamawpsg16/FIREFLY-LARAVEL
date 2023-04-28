@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthenticationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\AccountRecoveryQuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,12 +29,23 @@ Route::post('/register',[AuthenticationController::class, 'registerStore'])->nam
 
 Route::group(['middleware' => ['auth']],function(){
     Route::resources([
+        /** POST */
         'post' => PostController::class, 
-        'tag' => TagController::class
+         /** TAG */
+        'tag' => TagController::class,
+         /** QUESTION */
+        'question' => AccountRecoveryQuestionController::class
     ]);
     
     /** LOGOUT */
     Route::post('/logout',[AuthenticationController::class, 'logout'])->name('logout');
+
+    /** PROFILE */
+    Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
+
+    /** RESET PASSWORD */
+   
+
 });
 
 Route::group(['middleware' => ['guest']],function(){
@@ -40,5 +53,7 @@ Route::group(['middleware' => ['guest']],function(){
     /** LOGIN */
     Route::get('/login',[AuthenticationController::class, 'login'])->name('login.create');
     Route::post('/login',[AuthenticationController::class, 'authenticate'])->name('login.authenticate');
+    Route::get('/account-recovery',[AuthenticationController::class,'forgotPassword'])->name('forgot-password');
+    Route::post('/account-recovery/{email}',[AuthenticationController::class,'checkEmailIfExists'])->name('checkIfemailExists');
 });
 
