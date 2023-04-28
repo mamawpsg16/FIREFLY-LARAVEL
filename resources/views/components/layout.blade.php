@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+    <title>Laravel Brodie</title>
+</head>
+<body>
+    <x-navbar.navbar></x-navbar.navbar>
+    {{ $slot }}
+</body>
+</html>
