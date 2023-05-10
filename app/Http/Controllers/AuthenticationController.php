@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\StoreRegisterRequest;
 use App\Models\AccountRecoveryQuestion;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\StoreRegisterRequest;
 
 class AuthenticationController extends Controller
 {
@@ -25,6 +26,7 @@ class AuthenticationController extends Controller
      */
     public function registerStore(StoreRegisterRequest $request)
     {
+        // dd($request->all());
         // dd($request->input('question_id'),$request->input('question_answer'));
         // dd($request->input('first_name'));
         // dd($request->input('email'));
@@ -87,26 +89,44 @@ class AuthenticationController extends Controller
     }
 
     public function checkEmailIfExists(Request $request,$email){
-        // dd($request->all());
+        // dump($email);
         $user_exists = User::where('email',$email)->exists();
+        // dd($user_exists);
         $user = User::where('email',$email)->first();
         if($user){
             $question = AccountRecoveryQuestion::find($user['recovery_question_id'])['question'];
         }
-        // $validate = $request->validate(['password' => ['required','confirmed'], 'password_confirmation' => 'required']);
-        $is_correct_answer = false;
-        if($user_exists){
-            $is_correct_answer  = ($user['recovery_question_answer']  == $request->input('question_answer'));
-        }
-        // if($user_exists && $is_correct_answer){
-        //     $user->update([
-                
-        //     ]);
-        // }
         return response()->json([
             'is_user_exist' => $user_exists,
-            'question' => $question ?? '',
-            'is_correct_answer' => $is_correct_answer
+            'question' => $question ?? ''
+            // 'is_correct_answer' => $is_correct_answer
          ]);
     }
+    public function verifyAnswer(Request $request){
+        $answer = User::select('recovery_question_answer')->where('email',$request->input('email'))->first();
+       
+       $verified = strtolower($answer['recovery_question_answer']) == strtolower($request->input('question_answer'));
+
+       return response()->json([
+        'is_correct_answer' => $verified
+        // 'is_correct_answer' => $is_correct_answer
+     ]);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request){
+
+        $user = User::where('email', $request->input('email'))->first();
+        // dd($request->all());
+        if (!$user) {
+            // user not found, handle error
+        }
+    
+        $user->update([
+            'password' => bcrypt($request->input('password')),
+        ]);
+
+
+        return redirect()->route('login.authenticate')->with('success', 'Your password has been successfully changed. Please log in.');
+    }
 }
+

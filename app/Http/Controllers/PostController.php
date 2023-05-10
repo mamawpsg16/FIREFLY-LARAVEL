@@ -35,6 +35,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        $this->authorize('create-post');
         $tags = Tag::latest()->get();
         return view('post.create',compact('tags'));
     }
@@ -48,19 +49,19 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         
-        $validated = $request->validated();
+        // $validated = $request->validated();
   
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($request) {
     
                 $post = Post::create([
-                    'user_id' => 1,
-                    'title' => $validated['title'],
-                    'description' => $validated['description'],
-                    'is_published' => isset($validated['is_published']),
+                    'user_id' => auth()->id(),
+                    'title' => $request['title'],
+                    'description' => $request['description'],
+                    'is_published' => isset($request['is_published']),
                 ]);
     
-                $post->tags()->sync($validated['tags']);
+                $post->tags()->sync($request['tags']);
     
             });
     
@@ -107,19 +108,20 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $validated = $request->validated();
+        // $validated = $request->validated();
+        $this->authorize('update-post', $post);
         
         try {
-            DB::transaction(function () use ($validated, $post) {
+            DB::transaction(function () use ($request, $post) {
     
                 $post->update([
-                    'user_id' => 1,
-                    'title' => $validated['title'],
-                    'description' => $validated['description'],
-                    'is_published' => isset($validated['is_published']),
+                    'user_id' => auth()->id(),
+                    'title' => $request['title'],
+                    'description' => $request['description'],
+                    'is_published' => isset($request['is_published']),
                 ]);
     
-                $post->tags()->sync($validated['tags']);
+                $post->tags()->sync($request['tags']);
     
             });
     

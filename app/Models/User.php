@@ -25,7 +25,10 @@ class User extends Authenticatable
         'email',
         'password',
         'recovery_question_id',
-        'recovery_question_answer'
+        'recovery_question_answer',
+        'image_name',
+        'hash_image_name',
+        'image_path'
     ];
 
     /**
@@ -50,5 +53,30 @@ class User extends Authenticatable
     public function recovery_question()
     {
         return $this->hasOne(AccountRecoveryQuestion::class);
+    }
+
+    public function getProfilePictureUrl()
+    {
+        if ($this->image_name) {
+            return asset('storage/profile_pictures/' . $this->hash_image_name);
+        } else {
+            return asset('storage/profile_pictures/no-profile.png');
+        }
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')->withTimestamps();
+    }
+
+    public function followButtonText(){
+        $isFollowing  = in_array(auth()->id(),$this->followers()->get()->pluck('id')->toArray());
+        // dump($text);
+        return ($isFollowing ) ? 'Following' : 'Follow';
     }
 }

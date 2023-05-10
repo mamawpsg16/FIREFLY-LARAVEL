@@ -12,7 +12,9 @@
         <p>{{ $post['title'] }}</p>
         <p>{{ $post['description'] }}</p>
         <p>{{ ($post['is_published']) ? 'Published' : 'Pending' }}</p>
-        <a href="{{ route('post.show',$post['id']) }}">Show</a>
+        @can('view',$post)
+            <a href="{{ route('post.show',$post['id']) }}">Show</a>
+        @endcan
         @endforeach
     @else
         EMPTY

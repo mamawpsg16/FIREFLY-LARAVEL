@@ -1,12 +1,12 @@
 <x-layout>
     {{-- LOOP ALL THE ERRORS  --}}
-    @if($errors->any())
+    {{-- @if($errors->any())
         <div style="color:red">
                 @foreach ($errors->all() as $error)
                   <p>{{ $error }}</p> 
                 @endforeach
         </div>
-    @endif
+    @endif --}}
     {{-- DISPLAY ERROR ONE BY ONE  --}}
         {{-- @error('password')
             <div class="alert alert-danger">{{ $message }}</div>

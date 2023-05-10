@@ -41,7 +41,10 @@ Route::group(['middleware' => ['auth']],function(){
     Route::post('/logout',[AuthenticationController::class, 'logout'])->name('logout');
 
     /** PROFILE */
-    Route::get('/profile',[ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile',[ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile',[ProfileController::class, 'store'])->name('profile.store');
+    Route::get('/profile/{user:first_name}',[ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/toggleFollow',[ProfileController::class, 'toggleFollow'])->name('profile.toggleFollow');
 
     /** RESET PASSWORD */
    
@@ -55,5 +58,7 @@ Route::group(['middleware' => ['guest']],function(){
     Route::post('/login',[AuthenticationController::class, 'authenticate'])->name('login.authenticate');
     Route::get('/account-recovery',[AuthenticationController::class,'forgotPassword'])->name('forgot-password');
     Route::post('/account-recovery/{email}',[AuthenticationController::class,'checkEmailIfExists'])->name('checkIfemailExists');
+    Route::post('/account-recovery/verify/answer',[AuthenticationController::class,'verifyAnswer'])->name('verifyAnswer');
+    Route::post('/account-recovery/change-password/reset',[AuthenticationController::class,'resetPassword'])->name('resetPassword');
 });
 
