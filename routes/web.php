@@ -3,7 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\AccountRecoveryQuestionController;
 
@@ -19,7 +23,7 @@ use App\Http\Controllers\AccountRecoveryQuestionController;
 */
 
 Route::get('/', function () {
-    return view('welcome',['name' => 'HELLO MF']);
+    return view('authentication.login',['name' => 'HELLO MF']);
 });
 
 /** REGISTER */
@@ -34,7 +38,13 @@ Route::group(['middleware' => ['auth']],function(){
          /** TAG */
         'tag' => TagController::class,
          /** QUESTION */
-        'question' => AccountRecoveryQuestionController::class
+        'question' => AccountRecoveryQuestionController::class,
+        /** ROLE */
+        'role' => RoleController::class,
+        /** PERMISSION */
+        'permission' => PermissionController::class,
+        /** ADMIN */
+        'admin' => AdminController::class,
     ]);
     
     /** LOGOUT */
@@ -45,9 +55,11 @@ Route::group(['middleware' => ['auth']],function(){
     Route::post('/profile',[ProfileController::class, 'store'])->name('profile.store');
     Route::get('/profile/{user:first_name}',[ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/toggleFollow',[ProfileController::class, 'toggleFollow'])->name('profile.toggleFollow');
+    Route::get('/profile/search/user',[ProfileController::class,'search'])->name('profile.search');
+    Route::get('/profile/search/results',[ProfileController::class,'searchResults'])->name('profile.results');
 
-    /** RESET PASSWORD */
-   
+    /** MODULE */
+    Route::get('module/access',[ModuleController::class, 'index'])->name('module.access');
 
 });
 
@@ -56,6 +68,7 @@ Route::group(['middleware' => ['guest']],function(){
     /** LOGIN */
     Route::get('/login',[AuthenticationController::class, 'login'])->name('login.create');
     Route::post('/login',[AuthenticationController::class, 'authenticate'])->name('login.authenticate');
+    /** RESET PASSWORD */
     Route::get('/account-recovery',[AuthenticationController::class,'forgotPassword'])->name('forgot-password');
     Route::post('/account-recovery/{email}',[AuthenticationController::class,'checkEmailIfExists'])->name('checkIfemailExists');
     Route::post('/account-recovery/verify/answer',[AuthenticationController::class,'verifyAnswer'])->name('verifyAnswer');

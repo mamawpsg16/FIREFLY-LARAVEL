@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function index(){
-        return view('profile.index',['users' => User::get()->pluck('first_name')->toArray()]);
+        $tags = Tag::latest()->get();
+        return view('profile.index',['users' => User::pluck('first_name')->toArray(), 'tags' => $tags]);
     }
 
     public function show(User $user){
@@ -56,6 +59,28 @@ class ProfileController extends Controller
         $user = User::find($request['id']);
         // dump($user->first_name);
         return redirect()->route('profile.show',$user->first_name);
+    }
+
+    public function search(Request $request){
+        // dd($request->all());
+        $query = $request->input('search'); // Get search query from request
+        $query = str_replace(['"', "'", ';'], '', $query);
+        session(['query' => $query]);
+        // session()->flash('query',$query);
+    }
+
+    public function searchResults(){
+        $query = session('query');
+        // $query = session('query');
+        $results = User::where(DB::raw('CONCAT(first_name, middle_name, last_name)'), 'LIKE', '%'.$query.'%')
+        ->orWhere('email', 'LIKE', '%'.$query.'%')
+        ->select(['first_name', 'middle_name', 'last_name', 'email'])
+        ->get()->toArray();
+        if(!$query){
+            $results = [];
+        }
+
+        return view('profile.search',compact('results'));
     }
 
 }

@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StorePostRequest;
+use Barryvdh\Debugbar\Facades\Debugbar;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -23,8 +24,20 @@ class PostController extends Controller
     // public function __construct()
     public function index()
     {
-        $posts = Post::latest()->with('tags')->get();
+        // $posts = Post::latest()->with('tags')->get();
 
+        $posts = Post::where(function ($query){
+            // Retrieve the posts of the current user
+            $query->where('user_id', auth()->id());
+        
+            // Retrieve the posts of the following users
+            $query->orWhereHas('user.followers', function ($query){
+                $query->where('follower_id',  auth()->id());
+            });
+        })
+        ->with('tags') // Eager load the tags relationship
+        ->get();
+        
         return view('post.index',['posts' => $posts]);
     }
 
@@ -81,7 +94,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $tags = join(', ',$post->tags->pluck('name')->toArray());
+        $tags = join(', ',$post->tags()->pluck('name')->toArray());
+
+        // Debugbar::info($post->tags);
 
         return view('post.show', compact('post','tags'));
     }

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Module;
+use App\Models\PermissionRole;
+use Laravel\Sanctum\HasApiTokens;
+use App\Models\AccountRecoveryQuestion;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use App\Models\AccountRecoveryQuestion;
 
 class User extends Authenticatable
 {
@@ -50,6 +52,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function recovery_question()
     {
         return $this->hasOne(AccountRecoveryQuestion::class);
@@ -79,4 +86,29 @@ class User extends Authenticatable
         // dump($text);
         return ($isFollowing ) ? 'Following' : 'Follow';
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    // public function hasPermission()
+    // {
+    //     $role  = $this->roles()->pluck('id');
+    //     $modules = Module::orderByDesc('id')->get()->toArray();
+    //     $modules_and_permissions = PermissionRole::select('module_id', 'permissions')->whereIn('role_id', $role)->get()->toArray();
+        
+    //     dd($modules_and_permissions);
+    //     // Check if the user has the permission through a role
+    //     // foreach ($this->roles as $role) {
+    //     //     if ($role->permissions()->where('name', $permission)->exists()) {
+    //     //         return true;
+    //     //     }
+    //     // }
+        
+    //     return false;
+    // }
+
+
+
 }
